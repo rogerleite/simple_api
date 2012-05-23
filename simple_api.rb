@@ -31,7 +31,20 @@ end
 class SimpleApi < Sinatra::Base
 
   before do
+    puts "=== Request Headers: #{request_headers.inspect}"
+    puts "=== Request Cookies: #{request.cookies.inspect}" unless request.cookies.empty?
+    puts "\n"
+
     response["Content-Type"] = "application/json"
+  end
+
+  helpers do
+
+    # Source: https://gist.github.com/338809
+    def request_headers
+      env.inject({}){|acc, (k,v)| acc[$1.downcase] = v if k =~ /^http_(.*)/i; acc}
+    end
+
   end
 
   get '/recursos/busca' do
